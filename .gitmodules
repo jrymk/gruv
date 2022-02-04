@@ -1,9 +1,3 @@
-[submodule ".\\gruv-os\\src\\Arduino_GT911_Library\\"]
-	path = .\\gruv-os\\src\\Arduino_GT911_Library\\
-	url = https://github.com/u4mzu4/Arduino_GT911_Library
-[submodule ".\\gruv-os\\src\\ILI9488_t3\\"]
-	path = .\\gruv-os\\src\\ILI9488_t3\\
-	url = https://github.com/KurtE/ILI9488_t3
 [submodule ".\\gruv-os\\lib\\Arduino_GT911_Library\\"]
 	path = .\\gruv-os\\lib\\Arduino_GT911_Library\\
 	url = https://github.com/u4mzu4/Arduino_GT911_Library
