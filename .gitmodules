@@ -1,0 +1,3 @@
+[submodule ".\\gruv-os\\src\\Arduino_GT911_Library\\"]
+	path = .\\gruv-os\\src\\Arduino_GT911_Library\\
+	url = https://github.com/u4mzu4/Arduino_GT911_Library
