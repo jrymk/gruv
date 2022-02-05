@@ -13,7 +13,7 @@
 #include <SPI.h> // this is needed for display
 #include <ILI9488_t3.h>
 #include <Wire.h> // this is needed for FT6206
-#include "./Arduino_GT911_Library/Goodix.h"
+#include <Goodix.h>
 
 #define INT_PIN 39
 #define RST_PIN 3
@@ -29,8 +29,11 @@ ILI9488_t3 tft = ILI9488_t3(&SPI, TFT_CS, TFT_DC, TFT_RST);
 #define PENRADIUS 3
 int oldcolor, currentcolor;
 
+int handlecounter = 0;
+
 void handleTouch(int8_t contacts, GTPoint *points)
 {
+  handlecounter++;
   //Serial.printf("Contacts: %d\n", contacts);
   for (uint8_t i = 0; i < contacts; i++)
   {
@@ -89,13 +92,14 @@ void handleTouch(int8_t contacts, GTPoint *points)
     }
     if (((points[i].y - PENRADIUS) > BOXSIZE) && ((points[i].y + PENRADIUS) < tft.height()))
     {
-      tft.fillCircle(points[i].x, points[i].y, PENRADIUS, currentcolor);
+      tft.fillCircle(points[i].x, points[i].y, pow(1.2, points[i].area / 10), currentcolor);
     }
   }
 }
 
 void touchStart()
 {
+
   unsigned short configInfo;
 
   touch.begin(INT_PIN, RST_PIN, GOODIX_I2C_ADDR_BA);
@@ -120,6 +124,8 @@ void touchStart()
     Serial.print("Config ERROR: ");
     Serial.println(configInfo);
   }
+  touch.fwResolution(320, 480, 0);
+  Serial.println(touch.configCheck(true));
 }
 
 void setup(void)
@@ -133,11 +139,12 @@ void setup(void)
   tft.begin();
   tft.setRotation(0); // 180
 
-  Wire.setClock(400000);
+  Wire.setClock(800000);
   Wire.begin();
   delay(300);
 
   touch.setHandler(handleTouch);
+
   touchStart();
 
   Serial.println("Capacitive touchscreen started");
@@ -157,6 +164,9 @@ void setup(void)
   currentcolor = ILI9488_RED;
 }
 
+int counter = 0;
+int time = 0;
+
 void loop()
 {
 
@@ -175,5 +185,14 @@ void loop()
   Serial.println(")");
   */
   touch.loop();
-  delay(1);
+  //delay(1);
+  counter++;
+
+  if (millis() - time >= 1000)
+  {
+    time += 1000;
+    Serial.printf("%d %d\n", counter, handlecounter);
+    counter = 0;
+    handlecounter = 0;
+  }
 }
