@@ -1,23 +1,11 @@
-/***************************************************
-  This is our touchscreen painting example for the Adafruit ILI9341
-  captouch shield
-  ----> http://www.adafruit.com/products/1947
-  Check out the links above for our tutorials and wiring diagrams
-  Adafruit invests time and resources providing this open source code,
-  please support Adafruit and open-source hardware by purchasing
-  products from Adafruit!
-  Written by Limor Fried/Ladyada for Adafruit Industries.
-  MIT license, all text above must be included in any redistribution
- ****************************************************/
-
-#include <SPI.h> // this is needed for display
+#include <SPI.h>
 #include <ILI9488_t3.h>
-#include <Wire.h> // this is needed for FT6206
-#include <Goodix.h>
+#include <Wire.h>
+#include <GT911.h>
 
 #define INT_PIN 39
 #define RST_PIN 3
-Goodix touch = Goodix();
+GT911 touch = GT911();
 
 #define TFT_RST 23
 #define TFT_DC 9
@@ -27,17 +15,17 @@ ILI9488_t3 tft = ILI9488_t3(&SPI, TFT_CS, TFT_DC, TFT_RST);
 // Size of the color selection boxes and the paintbrush size
 #define BOXSIZE 40
 #define PENRADIUS 3
-int oldcolor, currentcolor;
 
+int oldcolor, currentcolor;
 int handlecounter = 0;
 
-void handleTouch(int8_t contacts, GTPoint *points)
+void handleTouch(int8_t count, GTPoint *points)
 {
   handlecounter++;
-  //Serial.printf("Contacts: %d\n", contacts);
-  for (uint8_t i = 0; i < contacts; i++)
+  // Serial.printf("Contacts: %d\n", contacts);
+  for (uint8_t i = 0; i < count; i++)
   {
-    //Serial.printf("C%d: %d %d \n", points[i].trackId, points[i].x, points[i].y);
+    // Serial.printf("C%d: %d %d \n", points[i].trackId, points[i].x, points[i].y);
 
     if (points[i].y < BOXSIZE)
     {
@@ -92,7 +80,7 @@ void handleTouch(int8_t contacts, GTPoint *points)
     }
     if (((points[i].y - PENRADIUS) > BOXSIZE) && ((points[i].y + PENRADIUS) < tft.height()))
     {
-      tft.fillCircle(points[i].x, points[i].y, pow(1.2, points[i].area / 10), currentcolor);
+      tft.fillCircle(points[i].x, points[i].y, pow(1.2, points[i].size / 10), currentcolor);
     }
   }
 }
@@ -100,12 +88,10 @@ void handleTouch(int8_t contacts, GTPoint *points)
 void touchStart()
 {
 
-  unsigned short configInfo;
-
-  touch.begin(INT_PIN, RST_PIN, GOODIX_I2C_ADDR_BA);
+  touch.begin(INT_PIN, RST_PIN, GT911_I2C_ADDR_BA);
   Serial.print("Check ACK on addr request on 0x");
-  Serial.print(touch.i2cAddr, HEX);
-  Wire.beginTransmission(touch.i2cAddr);
+  Serial.print(touch.getI2CAddress(), HEX);
+  Wire.beginTransmission(touch.getI2CAddress());
   if (!Wire.endTransmission())
   {
     Serial.println(": SUCCESS");
@@ -114,21 +100,41 @@ void touchStart()
   {
     Serial.print(": ERROR!");
   }
-  configInfo = touch.configCheck(false);
-  if (!configInfo)
+
+  touch.readInfo();
+  touch.readConfig();
+  touch.getConfig().xResolution = 480;
+  touch.getConfig().yResolution = 320;
+  touch.writeConfig();
+  if (touch.readConfig())
+    Serial.println("read ok");
+  Serial.printf("rr: %d", touch.getConfig().refreshRate);
+
+  if (touch.readInfo())
   {
     Serial.println("Config is OK");
   }
   else
   {
     Serial.print("Config ERROR: ");
-    Serial.println(configInfo);
   }
-  touch.fwRefreshRate(0);
-  Serial.println(touch.configCheck(true));
+  Serial.println(touch.getInfo().productId);
+  Serial.printf("firmware: %d\n", touch.getInfo().firmwareVersion);
+  Serial.printf("resolution: %d, %d\n", touch.getInfo().xCoordResolution, touch.getInfo().yCoordResolution);
+  Serial.printf("%d\n", touch.getConfig().touchCount);
+
+  Serial.printf("cfg: %d\n", touch.getConfig().touchCount);
+
+  for (int i = 0; i < sizeof(touch.getConfig()); i++)
+  {
+    Serial.printf("%02x ", *(((uint8_t *)&touch.getConfig()) + i));
+  }
+
+  // touch.fwRefreshRate(0);
+  Serial.println(touch.configCheck());
 }
 
-void setup(void)
+void setup()
 {
   pinMode(15, OUTPUT);
   digitalWrite(15, HIGH);
@@ -139,7 +145,7 @@ void setup(void)
   tft.begin();
   tft.setRotation(0); // 180
 
-  Wire.setClock(800000);
+  Wire.setClock(400000);
   Wire.begin();
   delay(300);
 
@@ -175,7 +181,7 @@ void loop()
   Serial.print("X = "); Serial.print(p.x);
   Serial.print("\tY = "); Serial.print(p.y);
   Serial.print(" -> ");
- 
+
 // Maybe flip it around to match the screen.
 //  p.x = map(p.x, 0, 240, 240, 0);
 //  p.y = map(p.y, 0, 320, 320, 0);
@@ -185,7 +191,7 @@ void loop()
   Serial.println(")");
   */
   touch.loop();
-  //delay(1);
+  // delay(1);
   counter++;
 
   if (millis() - time >= 1000)
