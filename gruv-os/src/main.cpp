@@ -124,7 +124,7 @@ void touchStart()
     Serial.print("Config ERROR: ");
     Serial.println(configInfo);
   }
-  touch.fwResolution(320, 480, 0);
+  touch.fwRefreshRate(0);
   Serial.println(touch.configCheck(true));
 }
 
