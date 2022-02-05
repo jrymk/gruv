@@ -1,9 +1,6 @@
-[submodule ".\\gruv-os\\lib\\ILI9488_t3"]
-	path = .\\gruv-os\\lib\\ILI9488_t3
-	url = https://github.com/KurtE/ILI9488_t3
-[submodule ".\\gruv-os\\lib\\Arduino_GT911_Library"]
-	path = .\\gruv-os\\lib\\Arduino_GT911_Library
+[submodule ".\\gruv-os\\lib\\GT911"]
+	path = .\\gruv-os\\lib\\GT911
 	url = https://github.com/jrymk/Arduino_GT911_Library
-[submodule ".\\gruv-os\\lib\\Arduino_GT911_Library\\"]
-	path = .\\gruv-os\\lib\\Arduino_GT911_Library\\
-	url = https://github.com/jrymk/Arduino_GT911_Library
+[submodule ".\\gruv-os\\lib\\ILI9488"]
+	path = .\\gruv-os\\lib\\ILI9488
+	url = https://github.com/jrymk/ILI9488_t3
