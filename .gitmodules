@@ -4,3 +4,9 @@
 [submodule ".\\gruv-os\\lib\\ILI9488"]
 	path = .\\gruv-os\\lib\\ILI9488
 	url = https://github.com/jrymk/ILI9488_t3
+[submodule "Adafruit_GFX"]
+	path = Adafruit_GFX
+	url = https://github.com/adafruit/Adafruit-GFX-Library
+[submodule ".\\gruv-os\\lib\\Adafruit_GFX"]
+	path = .\\gruv-os\\lib\\Adafruit_GFX
+	url = https://github.com/adafruit/Adafruit-GFX-Library
