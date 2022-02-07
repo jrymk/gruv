@@ -10,3 +10,6 @@
 [submodule ".\\gruv-os\\lib\\ILI9488p"]
 	path = .\\gruv-os\\lib\\ILI9488p
 	url = https://github.com/jrymk/ILI9488p
+[submodule ".\\gruv-os\\lib\\ILI9488p\\"]
+	path = .\\gruv-os\\lib\\ILI9488p\\
+	url = https://github.com/jrymk/ILI9488p
