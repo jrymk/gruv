@@ -304,17 +304,13 @@ void setup()
 
   Wire.setClock(4000000);
   Wire.begin();
-  delay(300);
+  // delay(300);
 
   touch::touchPanel.begin(INT_PIN, RST_PIN, GT911_I2C_ADDR_BA, touch::touchPanelHandler);
 
   touch::touchPanel.printConfig();
 
-  ID = tft.readID();
-  tft.setResolution(320, 480); // Set your resolution
-  Serial.print("Device ID: 0x");
-  Serial.println(ID, HEX);
-  tft.begin(ID);
+  tft.begin();
 
   uint32_t width = tft.width();
   Serial.print("Width: ");
@@ -490,11 +486,11 @@ void loop()
 
     tft.setCursor(277, 0);
     uint16_t tempColor = MAGENTA;
-    if (tempmonGetTemp() <= 32)
+    if (tempmonGetTemp() <= 40)
       tempColor = GREEN;
-    else if (tempmonGetTemp() <= 45)
+    else if (tempmonGetTemp() <= 50)
       tempColor = YELLOW;
-    else if (tempmonGetTemp() <= 55)
+    else if (tempmonGetTemp() <= 60)
       tempColor = ORANGE;
     else
       tempColor = RED;
